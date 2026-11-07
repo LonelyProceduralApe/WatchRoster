@@ -1,0 +1,75 @@
+{
+  "_note": "示例人员数据，请替换为真实名单。backupLeader=带班领导，dutyLeader=值班领导，staff=工作人员（人数不限）。",
+  "groups": [
+    {
+      "no": 1,
+      "name": "第一组",
+      "backupLeader": "罗升阳",
+      "dutyLeader": "祝华斌",
+      "staff": ["唐洁均", "李波", "帅婷婷"]
+    },
+    {
+      "no": 2,
+      "name": "第二组",
+      "backupLeader": "任秋桔",
+      "dutyLeader": "李勤凯",
+      "staff": ["张司杰", "宋建峰", "毛佳麟"]
+    },
+    {
+      "no": 3,
+      "name": "第三组",
+      "backupLeader": "康曦",
+      "dutyLeader": "严瑶",
+      "staff": ["宋汶芩", "蒋冬梅", "任克森"]
+    },
+    {
+      "no": 4,
+      "name": "第四组",
+      "backupLeader": "喻青松",
+      "dutyLeader": "黄莎莉",
+      "staff": ["唐锐", "曾旌诚"]
+    },
+    {
+      "no": 5,
+      "name": "第五组",
+      "backupLeader": "潘涛",
+      "dutyLeader": "张瑛妮",
+      "staff": ["杨斌", "马俊", "车媛媛"]
+    },
+    {
+      "no": 6,
+      "name": "第六组",
+      "backupLeader": "陈力铭",
+      "dutyLeader": "李娅蕾",
+      "staff": ["黄丹梅", "吕瑶"]
+    },
+    {
+      "no": 7,
+      "name": "第七组",
+      "backupLeader": "伍建波",
+      "dutyLeader": "陈瑶",
+      "staff": ["王思", "陈昱泽", "张钟瑞"]
+    },
+    {
+      "no": 8,
+      "name": "第八组",
+      "backupLeader": "刘南魁",
+      "dutyLeader": "郑妮娟",
+      "staff": ["徐阳", "孙小琴", "张致钰"]
+    },
+    {
+      "no": 9,
+      "name": "第九组",
+      "backupLeader": "黎雪玲",
+      "dutyLeader": "王江柳",
+      "staff": ["周渊民", "唐震"]
+    },
+    {
+      "no": 10,
+      "name": "第十组",
+      "backupLeader": "张华",
+      "dutyLeader": "何茂英",
+      "staff": ["刘洋", "欧丽琴", "曾清梅"]
+    }
+  ]
+}

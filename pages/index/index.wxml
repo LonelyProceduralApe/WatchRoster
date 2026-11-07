@@ -1,0 +1,164 @@
+<!--index.wxml-->
+<navigation-bar title="值班表" back="{{false}}" color="black" background="#F4F6FA"></navigation-bar>
+
+<view class="tabs">
+  <view
+    wx:for="{{tabs}}"
+    wx:key="key"
+    class="tab {{activeTab === item.key ? 'tab--active' : ''}}"
+    data-key="{{item.key}}"
+    bindtap="onTabChange"
+  >
+    <text class="tab__label {{activeTab === item.key ? 'tab__label--active' : ''}}">{{item.label}}</text>
+  </view>
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="content">
+    <view wx:if="{{noticeCount > 0}}" class="notice" hover-class="notice--hover" bindtap="onNoticeTap">
+      <view class="notice__dot">
+        <text class="notice__dot-text">!</text>
+      </view>
+      <text class="notice__text">{{noticeText}}</text>
+      <text class="notice__arrow">›</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="state">
+      <text class="state__text">加载中…</text>
+    </view>
+
+    <view wx:elif="{{error}}" class="state">
+      <text class="state__text state__text--error">{{error}}</text>
+      <view class="retry" bindtap="onRetry">
+        <text class="retry__text">重新加载</text>
+      </view>
+    </view>
+
+    <!-- 当天：带班领导 / 值班领导 / 工作人员 -->
+    <block wx:elif="{{activeTab === 'day'}}">
+      <view wx:if="{{day}}" class="hero">
+        <view class="hero__left">
+          <text class="hero__date">{{day.dateLabel}}</text>
+          <text class="hero__meta">{{day.weekday}} · {{day.dayTypeLabel}}</text>
+        </view>
+        <view class="hero__badge">
+          <text class="hero__badge-text">{{day.groupName}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{day}}" class="card">
+        <view class="role">
+          <text class="role__label">带班领导</text>
+          <view class="role__value-wrap">
+            <text class="role__value">{{day.backupLeader}}</text>
+            <text wx:if="{{day.backupGroupName}}" class="role__hint">{{day.backupGroupName}}</text>
+          </view>
+        </view>
+        <view class="divider"></view>
+        <view class="role">
+          <text class="role__label">值班领导</text>
+          <text class="role__value">{{day.dutyLeader}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="role">
+          <text class="role__label">工作人员</text>
+          <text class="role__value role__value--staff">{{day.staffText}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{day && day.note}}" class="note">
+        <text class="note__text">{{day.note}}</text>
+      </view>
+    </block>
+
+    <!-- 当周：值班日期 / 带班领导 / 值班领导 / 工作人员 -->
+    <block wx:elif="{{activeTab === 'week'}}">
+      <view class="section-head">
+        <text class="section-head__title">本周值班</text>
+        <text class="section-head__sub">{{week.rangeLabel}}</text>
+      </view>
+
+      <view class="wrow wrow--head">
+        <view class="wcol wcol--date">
+          <text class="wcol__head">值班日期</text>
+        </view>
+        <view class="wcol wcol--name">
+          <text class="wcol__head">带班领导</text>
+        </view>
+        <view class="wcol wcol--name">
+          <text class="wcol__head">值班领导</text>
+        </view>
+        <view class="wcol wcol--staff">
+          <text class="wcol__head">工作人员</text>
+        </view>
+      </view>
+
+      <view
+        wx:for="{{week.days}}"
+        wx:key="date"
+        class="wrow {{item.isToday ? 'wrow--today' : ''}}"
+      >
+        <view class="wcol wcol--date">
+          <text class="wcol__main">{{item.dateLabel}}</text>
+          <text class="wcol__sub">{{item.weekday}}</text>
+        </view>
+        <view class="wcol wcol--name">
+          <text class="wcol__main">{{item.backupLeader}}</text>
+          <text wx:if="{{item.substituted}}" class="wcol__tag">代班</text>
+        </view>
+        <view class="wcol wcol--name">
+          <text class="wcol__main">{{item.dutyLeader}}</text>
+        </view>
+        <view class="wcol wcol--staff">
+          <text class="wcol__staff">{{item.staffText}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 当月：班次 / 带班领导 / 值班领导 / 工作人员 / 值班时间安排 -->
+    <block wx:else>
+      <view class="section-head">
+        <text class="section-head__title">{{month.title}}值班表</text>
+        <text class="section-head__sub">{{month.summary}}</text>
+      </view>
+
+      <view
+        wx:for="{{month.days}}"
+        wx:key="date"
+        class="mcard {{item.isToday ? 'mcard--today' : ''}}"
+      >
+        <view class="mcard__top">
+          <view class="mcard__date">
+            <text class="mcard__day">{{item.dateLabel}}</text>
+            <text class="mcard__weekday">{{item.weekday}}</text>
+          </view>
+          <view class="mcard__tags">
+            <text class="tag tag--type">{{item.dayTypeLabel}}</text>
+            <text class="tag tag--shift">{{item.shiftName}}</text>
+          </view>
+        </view>
+
+        <view class="mline">
+          <text class="mline__label">带班领导</text>
+          <text class="mline__value">{{item.backupLeader}}</text>
+        </view>
+        <view class="mline">
+          <text class="mline__label">值班领导</text>
+          <text class="mline__value">{{item.dutyLeader}}</text>
+        </view>
+        <view class="mline">
+          <text class="mline__label">工作人员</text>
+          <text class="mline__value">{{item.staffText}}</text>
+        </view>
+        <view class="mline mline--time">
+          <text class="mline__label">值班时间</text>
+          <text class="mline__value mline__value--time">{{item.shiftTime}}</text>
+        </view>
+
+        <view wx:if="{{item.note}}" class="mcard__note">
+          <text class="mcard__note-text">{{item.note}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</scroll-view>

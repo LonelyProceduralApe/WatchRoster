@@ -1,0 +1,195 @@
+/**swap.wxss**/
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f6fa;
+}
+
+.scrollarea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: hidden;
+}
+
+.content {
+  padding: 8rpx 24rpx 80rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  padding: 18rpx 24rpx;
+  margin-bottom: 16rpx;
+  background: #fdecea;
+  border-radius: 16rpx;
+}
+
+.banner__text {
+  font-size: 24rpx;
+  color: #c0392b;
+  line-height: 34rpx;
+}
+
+.group-title {
+  padding: 28rpx 8rpx 14rpx;
+  font-size: 26rpx;
+  color: #8b98ab;
+}
+
+.card {
+  padding: 0 28rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 0;
+  border-bottom: 1px solid #eef1f6;
+}
+
+.row--last {
+  border-bottom: none;
+}
+
+.row__label {
+  font-size: 28rpx;
+  color: #56637a;
+}
+
+.row__value {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 440rpx;
+}
+
+.row__text {
+  font-size: 28rpx;
+  color: #1b2431;
+  text-align: right;
+}
+
+.row__text--empty {
+  color: #b3bccb;
+}
+
+.row__arrow {
+  margin-left: 8rpx;
+  font-size: 32rpx;
+  color: #c3cbd8;
+}
+
+/* 当天排班详情 */
+.detail {
+  padding: 20rpx 0 24rpx;
+  border-top: 1px solid #eef1f6;
+}
+
+.detail__head {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 12rpx;
+}
+
+.detail__group {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2b5cff;
+}
+
+.detail__meta {
+  font-size: 22rpx;
+  color: #8b98ab;
+}
+
+.dl {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+}
+
+.dl__label {
+  font-size: 24rpx;
+  color: #8b98ab;
+}
+
+.dl__value {
+  font-size: 26rpx;
+  color: #1b2431;
+}
+
+.tip {
+  margin-top: 14rpx;
+  padding: 12rpx 18rpx;
+  border-radius: 12rpx;
+}
+
+.tip--ok {
+  background: #eef2fe;
+}
+
+.tip--ok .tip__text {
+  color: #2b5cff;
+}
+
+.tip--warn {
+  background: #fff6dc;
+}
+
+.tip--warn .tip__text {
+  color: #8a6a00;
+}
+
+.tip__text {
+  font-size: 22rpx;
+  line-height: 32rpx;
+}
+
+.textarea {
+  width: 100%;
+  height: 140rpx;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #1b2431;
+  box-sizing: border-box;
+}
+
+.textarea__placeholder {
+  color: #b3bccb;
+}
+
+.submit {
+  margin-top: 48rpx;
+  height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2b5cff;
+  border-radius: 46rpx;
+}
+
+.submit--hover {
+  opacity: 0.85;
+}
+
+.submit__text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footnote {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #b3bccb;
+}

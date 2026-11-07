@@ -1,0 +1,146 @@
+<!--swap.wxml-->
+<navigation-bar title="申请换班" back="{{true}}" color="black" background="#F4F6FA"></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="content">
+    <view wx:if="{{error}}" class="banner">
+      <text class="banner__text">{{error}}</text>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <text class="row__label">我是</text>
+        <picker
+          mode="selector"
+          range="{{personnel}}"
+          range-key="label"
+          value="{{myNameIndex}}"
+          bindchange="onNameChange"
+        >
+          <view class="row__value">
+            <text class="row__text {{myName ? '' : 'row__text--empty'}}">{{myName || '请选择姓名'}}</text>
+            <text class="row__arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <text class="group-title">换出班次（我的班）</text>
+    <view class="card">
+      <view class="row">
+        <text class="row__label">值班日期</text>
+        <picker
+          mode="date"
+          value="{{outDate}}"
+          start="{{today}}"
+          end="{{maxDate}}"
+          bindchange="onOutDateChange"
+        >
+          <view class="row__value">
+            <text class="row__text">{{outDate}}</text>
+            <text class="row__arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view wx:if="{{outDay}}" class="detail">
+        <view class="detail__head">
+          <text class="detail__group">{{outDay.groupName}}</text>
+          <text class="detail__meta">{{outDay.weekday}} · {{outDay.dayTypeLabel}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">带班领导</text>
+          <text class="dl__value">{{outDay.backupLeader}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">值班领导</text>
+          <text class="dl__value">{{outDay.dutyLeader}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">工作人员</text>
+          <text class="dl__value">{{outDay.staffText}}</text>
+        </view>
+        <view wx:if="{{outRoleLabel}}" class="tip tip--ok">
+          <text class="tip__text">你的角色：{{outRoleLabel}}</text>
+        </view>
+        <view wx:elif="{{myName}}" class="tip tip--warn">
+          <text class="tip__text">你在该日期没有值班安排</text>
+        </view>
+      </view>
+    </view>
+
+    <text class="group-title">换入班次（和谁换）</text>
+    <view class="card">
+      <view class="row">
+        <text class="row__label">对方日期</text>
+        <picker
+          mode="date"
+          value="{{targetDate}}"
+          start="{{today}}"
+          end="{{maxDate}}"
+          bindchange="onTargetDateChange"
+        >
+          <view class="row__value">
+            <text class="row__text">{{targetDate}}</text>
+            <text class="row__arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="row row--last">
+        <text class="row__label">换班人</text>
+        <picker
+          mode="selector"
+          range="{{targetCandidates}}"
+          range-key="label"
+          value="{{targetIndex}}"
+          bindchange="onTargetChange"
+        >
+          <view class="row__value">
+            <text class="row__text {{targetName ? '' : 'row__text--empty'}}">{{targetName || '请选择'}}</text>
+            <text class="row__arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view wx:if="{{targetDay}}" class="detail">
+        <view class="detail__head">
+          <text class="detail__group">{{targetDay.groupName}}</text>
+          <text class="detail__meta">{{targetDay.weekday}} · {{targetDay.dayTypeLabel}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">带班领导</text>
+          <text class="dl__value">{{targetDay.backupLeader}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">值班领导</text>
+          <text class="dl__value">{{targetDay.dutyLeader}}</text>
+        </view>
+        <view class="dl">
+          <text class="dl__label">工作人员</text>
+          <text class="dl__value">{{targetDay.staffText}}</text>
+        </view>
+        <view wx:if="{{targetRoleLabel}}" class="tip tip--ok">
+          <text class="tip__text">对方角色：{{targetRoleLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <text class="group-title">换班说明</text>
+    <view class="card">
+      <textarea
+        class="textarea"
+        value="{{reason}}"
+        maxlength="100"
+        placeholder="选填，例如：家中有事"
+        placeholder-class="textarea__placeholder"
+        bindinput="onReasonInput"
+      ></textarea>
+    </view>
+
+    <view class="submit" hover-class="submit--hover" bindtap="submit">
+      <text class="submit__text">{{submitting ? '提交中…' : '提交换班申请'}}</text>
+    </view>
+    <text class="footnote">提交后需管理员审批，通过后自动更新值班表</text>
+  </view>
+</scroll-view>

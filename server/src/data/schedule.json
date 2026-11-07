@@ -1,0 +1,55 @@
+{
+  "_note": "三条序列完全独立：工作日 / 周末 / 节假日 各有自己的起排日期与起始组号，序列从各自的起排日期连续推进，因此任意时间段的查询结果都一致。",
+  "workdayAnchorDate": "2026-11-13",
+  "weekendAnchorDate": "2026-10-31",
+  "holidayAnchorDate": "2026-09-25",
+  "workdayStartGroup": 1,
+  "weekendStartGroup": 1,
+  "holidayStartGroup": 1,
+  "shifts": {
+    "workday": {
+      "name": "白班",
+      "time": "17:00-次日09:00"
+    },
+    "weekend": {
+      "name": "全天班",
+      "time": "09:00-次日09:00"
+    },
+    "holiday": {
+      "name": "全天班",
+      "time": "09:00-次日09:00"
+    }
+  },
+  "substitution": {
+    "enabled": true,
+    "leaveGroups": [
+      3,
+      7
+    ],
+    "queue": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10
+    ],
+    "startDate": null,
+    "endDate": null,
+    "reason": "请长假",
+    "rotationStart": "2026-10-22",
+    "startGroup": 1,
+    "rotationStarts": {
+      "workday": "2026-10-22",
+      "weekend": "2026-11-07",
+      "holiday": "2026-09-27"
+    },
+    "startGroups": {
+      "workday": 1,
+      "weekend": 1,
+      "holiday": 1
+    }
+  }
+}

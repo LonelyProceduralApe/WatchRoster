@@ -1,0 +1,424 @@
+<!--admin.wxml-->
+<navigation-bar title="管理员" back="{{true}}" color="black" background="#F4F6FA"></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="content">
+    <!-- 管理员验证 -->
+    <view wx:if="{{!authed}}" class="verify">
+      <view class="verify__badge">
+        <text class="verify__badge-text">管</text>
+      </view>
+      <text class="verify__title">管理员验证</text>
+      <text class="verify__desc">输入管理员密码后可管理换班请求、值班人员与 Excel 导入</text>
+
+      <input
+        class="verify__input"
+        password
+        value="{{password}}"
+        placeholder="请输入管理员密码"
+        placeholder-class="verify__placeholder"
+        confirm-type="done"
+        bindinput="onPasswordInput"
+        bindconfirm="login"
+      />
+
+      <view wx:if="{{error}}" class="verify__error">
+        <text class="verify__error-text">{{error}}</text>
+      </view>
+
+      <view class="verify__btn" hover-class="verify__btn--hover" bindtap="login">
+        <text class="verify__btn-text">{{logging ? '验证中…' : '验证'}}</text>
+      </view>
+    </view>
+
+    <block wx:else>
+      <view class="tabs">
+        <view
+          wx:for="{{sections}}"
+          wx:key="key"
+          class="tab {{activeSection === item.key ? 'tab--active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onSectionChange"
+        >
+          <text class="tab__label {{activeSection === item.key ? 'tab__label--active' : ''}}">{{item.label}}</text>
+          <text wx:if="{{item.key === 'swaps' && pendingCount > 0}}" class="tab__badge">{{pendingCount}}</text>
+        </view>
+      </view>
+
+      <!-- 换班请求 -->
+      <block wx:if="{{activeSection === 'swaps'}}">
+        <view class="section-head">
+          <text class="section-head__title">换班请求</text>
+          <text class="section-head__sub">待处理 {{pendingCount}} 条</text>
+        </view>
+
+        <view wx:if="{{loadingSwaps}}" class="empty">
+          <text class="empty__text">加载中…</text>
+        </view>
+        <view wx:elif="{{requests.length === 0}}" class="empty">
+          <text class="empty__text">暂无换班申请</text>
+        </view>
+
+        <view wx:for="{{requests}}" wx:key="id" class="req-wrap">
+          <view class="req-delete" data-id="{{item.id}}" catchtap="onDeleteRequest">
+            <text class="req-delete__text">删除</text>
+          </view>
+
+          <view
+            class="req"
+            style="transform: translateX({{swipeId === item.id ? swipeX : 0}}px); transition: {{dragging && swipeId === item.id ? 'none' : 'transform 0.2s ease'}};"
+            data-id="{{item.id}}"
+            bindtouchstart="onRequestTouchStart"
+            bindtouchmove="onRequestTouchMove"
+            bindtouchend="onRequestTouchEnd"
+            bindtouchcancel="onRequestTouchEnd"
+          >
+            <view class="req__top">
+              <text class="req__status req__status--{{item.status}}">{{item.statusLabel}}</text>
+              <text class="req__time">{{item.createdAt}}</text>
+            </view>
+
+            <view class="req__body">
+              <view class="req__side">
+                <text class="req__name">{{item.requesterName}}</text>
+                <text class="req__meta">{{item.requesterDate}}</text>
+                <text class="req__meta">{{item.requesterRole}}</text>
+              </view>
+              <text class="req__arrow">⇄</text>
+              <view class="req__side req__side--right">
+                <text class="req__name">{{item.targetName}}</text>
+                <text class="req__meta">{{item.targetDate}}</text>
+                <text class="req__meta">{{item.targetRole}}</text>
+              </view>
+            </view>
+
+            <text wx:if="{{item.reason}}" class="req__reason">事由：{{item.reason}}</text>
+
+            <view wx:if="{{item.pending}}" class="req__actions">
+              <view class="btn btn--ghost" data-id="{{item.id}}" catchtap="onReject">
+                <text class="btn__text btn__text--ghost">驳回</text>
+              </view>
+              <view class="btn btn--primary" data-id="{{item.id}}" catchtap="onApprove">
+                <text class="btn__text btn__text--primary">批准</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <text class="footnote">向左滑动请求可删除；删除已批准的申请，对应换班会恢复原样</text>
+      </block>
+
+      <!-- 分组人员与请假 -->
+      <block wx:elif="{{activeSection === 'groups'}}">
+        <view class="section-head">
+          <text class="section-head__title">分组人员</text>
+          <text class="section-head__sub">{{leaveHint}}</text>
+        </view>
+
+        <view wx:for="{{groups}}" wx:key="no" wx:for-index="gi" class="gcard">
+          <view class="gcard__top">
+            <text class="gcard__name">{{item.name}}</text>
+            <view class="gcard__leave">
+              <text class="gcard__leave-label">带班领导请假</text>
+              <switch
+                checked="{{item.leave}}"
+                color="#2b5cff"
+                data-index="{{gi}}"
+                bindchange="onToggleLeave"
+              />
+            </view>
+          </view>
+
+          <view class="field">
+            <text class="field__label">带班领导</text>
+            <input
+              class="field__input"
+              value="{{item.backupLeader}}"
+              placeholder="姓名"
+              placeholder-class="field__placeholder"
+              data-index="{{gi}}"
+              data-field="backupLeader"
+              bindinput="onGroupField"
+            />
+          </view>
+
+          <view class="field">
+            <text class="field__label">值班领导</text>
+            <input
+              class="field__input"
+              value="{{item.dutyLeader}}"
+              placeholder="姓名"
+              placeholder-class="field__placeholder"
+              data-index="{{gi}}"
+              data-field="dutyLeader"
+              bindinput="onGroupField"
+            />
+          </view>
+
+          <view class="staff">
+            <text class="staff__label">工作人员（{{item.staff.length}} 人）</text>
+
+            <view
+              class="staff__row"
+              wx:for="{{item.staff}}"
+              wx:for-item="member"
+              wx:for-index="si"
+              wx:key="id"
+            >
+              <input
+                class="staff__input"
+                value="{{member.name}}"
+                placeholder="姓名"
+                placeholder-class="field__placeholder"
+                data-gi="{{gi}}"
+                data-si="{{si}}"
+                bindinput="onStaffInput"
+              />
+              <view class="staff__del" data-gi="{{gi}}" data-si="{{si}}" bindtap="onStaffDelete">
+                <text class="staff__del-text">删除</text>
+              </view>
+            </view>
+
+            <view class="staff__add" data-gi="{{gi}}" bindtap="onStaffAdd">
+              <text class="staff__add-text">+ 添加人员</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="actions">
+          <view class="btn btn--primary btn--block" bindtap="onSaveGroups">
+            <text class="btn__text btn__text--primary">{{groupSaving ? '保存中…' : '保存全部修改'}}</text>
+          </view>
+        </view>
+        <text class="footnote">切换「带班领导请假」立即生效，由 {{queueText}} 组循环代班（自动跳过请假组）</text>
+      </block>
+
+      <!-- 逐日：起排设置 + 逐日人员 -->
+      <block wx:elif="{{activeSection === 'staff'}}">
+        <view class="section-head">
+          <text class="section-head__title">起排设置</text>
+          <text class="section-head__sub">三条序列各自独立</text>
+        </view>
+
+        <view wx:for="{{lines}}" wx:key="key" wx:for-index="li" class="lcard">
+          <view class="lcard__top">
+            <text class="lcard__name">{{item.label}}</text>
+            <text class="lcard__hint">{{item.hint}}</text>
+          </view>
+
+          <view class="row">
+            <text class="row__label">起排日期</text>
+            <picker
+              mode="date"
+              value="{{item.anchorDate}}"
+              start="2018-01-01"
+              end="2030-12-31"
+              data-index="{{li}}"
+              bindchange="onAnchorChange"
+            >
+              <view class="row__value">
+                <text class="row__text {{item.anchorDate ? '' : 'row__text--empty'}}">{{item.anchorDate || '请选择'}}</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+
+          <view class="row row--last">
+            <text class="row__label">起始组</text>
+            <picker
+              mode="selector"
+              range="{{groupOptions}}"
+              range-key="label"
+              value="{{item.startGroup - 1}}"
+              data-index="{{li}}"
+              bindchange="onStartGroupChange"
+            >
+              <view class="row__value">
+                <text class="row__text">第{{item.startGroup}}组</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="section-head">
+          <text class="section-head__title">请假领导代班</text>
+          <text class="section-head__sub">三条序列各自轮转</text>
+        </view>
+
+        <view wx:for="{{backupLines}}" wx:key="key" wx:for-index="bi" class="lcard">
+          <view class="lcard__top">
+            <text class="lcard__name">{{item.label}}</text>
+            <text class="lcard__hint">跳过请假组</text>
+          </view>
+          <view class="row">
+            <text class="row__label">起排日期</text>
+            <picker
+              mode="date"
+              value="{{item.anchorDate}}"
+              start="2018-01-01"
+              end="2030-12-31"
+              data-index="{{bi}}"
+              bindchange="onBackupAnchorChange"
+            >
+              <view class="row__value">
+                <text class="row__text {{item.anchorDate ? '' : 'row__text--empty'}}">{{item.anchorDate || '未设置'}}</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+          <view class="row row--last">
+            <text class="row__label">起始组</text>
+            <picker
+              mode="selector"
+              range="{{backupOptions}}"
+              range-key="label"
+              value="{{item.startIndex}}"
+              data-index="{{bi}}"
+              bindchange="onBackupStartChange"
+            >
+              <view class="row__value">
+                <text class="row__text">第{{item.startGroup}}组</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="actions">
+          <view class="btn btn--primary btn--block" bindtap="onSaveSchedule">
+            <text class="btn__text btn__text--primary">{{scheduleSaving ? '保存中…' : '保存起排设置'}}</text>
+          </view>
+        </view>
+        <text class="footnote">三条线各自从起排日期连续推进：起排当天依次排起始组；工作日每 5 天一块、1-5 组与 6-10 组交替，周末与节假日各按 1→10 循环</text>
+        <text class="footnote">请假代班：工作日 / 周末 / 节假日各自设置起排日期与起始组，各排各的、互不占用；从起排日期当天起按起始组依次取组轮转，自动跳过请假组与自身，未选日期则沿用最早的起排日期</text>
+
+        <view class="section-head">
+          <text class="section-head__title">今日值班人员</text>
+          <text class="section-head__sub">{{assignInfo.groupName}}</text>
+        </view>
+
+        <view class="card">
+          <view class="row">
+            <text class="row__label">日期</text>
+            <picker
+              mode="date"
+              value="{{assignDate}}"
+              start="{{today}}"
+              end="{{maxDate}}"
+              bindchange="onAssignDateChange"
+            >
+              <view class="row__value">
+                <text class="row__text">{{assignDate}}</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+
+          <view class="field">
+            <text class="field__label">带班领导</text>
+            <input
+              class="field__input"
+              value="{{assignBackup}}"
+              placeholder="姓名"
+              placeholder-class="field__placeholder"
+              bindinput="onBackupInput"
+            />
+          </view>
+          <view class="field">
+            <text class="field__label">值班领导</text>
+            <input
+              class="field__input"
+              value="{{assignDuty}}"
+              placeholder="姓名"
+              placeholder-class="field__placeholder"
+              bindinput="onDutyInput"
+            />
+          </view>
+          <view class="field field--last">
+            <text class="field__label">工作人员</text>
+            <input
+              class="field__input"
+              value="{{assignStaff}}"
+              placeholder="多个姓名用顿号分隔"
+              placeholder-class="field__placeholder"
+              bindinput="onAssignStaffInput"
+            />
+          </view>
+        </view>
+
+        <view wx:if="{{assignInfo}}" class="hint">
+          <text class="hint__text">{{assignInfo.weekday}} · {{assignInfo.dayTypeLabel}}{{assignInfo.manual ? ' · 已手工设置' : ' · 自动排班'}}</text>
+        </view>
+
+        <view class="actions">
+          <view class="btn btn--ghost" bindtap="resetAssignment">
+            <text class="btn__text btn__text--ghost">恢复自动排班</text>
+          </view>
+          <view class="btn btn--primary" bindtap="saveAssignment">
+            <text class="btn__text btn__text--primary">{{assignSaving ? '保存中…' : '保存'}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 导入 / 导出 Excel -->
+      <block wx:else>
+        <view class="section-head">
+          <text class="section-head__title">导出</text>
+          <text class="section-head__sub">Excel</text>
+        </view>
+
+        <view class="card">
+          <view class="row row--last">
+            <text class="row__label">导出月份</text>
+            <picker mode="date" fields="month" value="{{exportMonth}}" bindchange="onExportMonthChange">
+              <view class="row__value">
+                <text class="row__text">{{exportMonth}}</text>
+                <text class="row__arrow">›</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="actions">
+          <view class="btn btn--ghost" bindtap="onExportTemplate">
+            <text class="btn__text btn__text--ghost">导出模板</text>
+          </view>
+          <view class="btn btn--primary" bindtap="onExportRoster">
+            <text class="btn__text btn__text--primary">导出该月排班表</text>
+          </view>
+        </view>
+
+        <view class="section-head">
+          <text class="section-head__title">导入 Excel 值班表</text>
+          <text class="section-head__sub">同日期覆盖</text>
+        </view>
+
+        <view class="card card--pad">
+          <text class="import__desc">表格需包含“日期”“带班领导”“值班领导”“工作人员”列，可直接使用导出的值班表。导入后同日期的手工设置会被覆盖。</text>
+
+          <view class="btn btn--primary btn--block" bindtap="chooseFile">
+            <text class="btn__text btn__text--primary">{{importing ? '导入中…' : '选择 Excel 文件'}}</text>
+          </view>
+
+          <view wx:if="{{importError}}" class="import__error">
+            <text class="import__error-text">{{importError}}</text>
+          </view>
+
+          <view wx:if="{{importResult}}" class="import__result">
+            <text class="import__result-title">导入完成</text>
+            <text class="import__result-line">文件：{{importResult.fileName}}</text>
+            <text class="import__result-line">工作表：{{importResult.sheetName}}</text>
+            <text class="import__result-line">
+              识别 {{importResult.imported}} 天 · 新增 {{importResult.created}} · 更新 {{importResult.updated}}
+            </text>
+            <text wx:for="{{importResult.warnings}}" wx:key="*this" class="import__result-warn">{{item}}</text>
+          </view>
+        </view>
+      </block>
+
+      <view class="logout" bindtap="logout">
+        <text class="logout__text">退出管理员</text>
+      </view>
+    </block>
+  </view>
+</scroll-view>

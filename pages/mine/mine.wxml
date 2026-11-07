@@ -1,0 +1,74 @@
+<!--mine.wxml-->
+<navigation-bar title="我的" back="{{false}}" color="black" background="#F4F6FA"></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="content">
+    <view class="profile" bindtap="onProfileTap">
+      <view class="avatar">
+        <text class="avatar__text">{{avatarText}}</text>
+      </view>
+      <view class="profile__info">
+        <text class="profile__name">{{name || '未设置姓名'}}</text>
+        <text class="profile__desc">{{name ? '值班排班 · 移动端' : '点击选择你的姓名'}}</text>
+      </view>
+    </view>
+
+    <text class="group-title">常用功能</text>
+
+    <view class="menu">
+      <view class="menu__item" hover-class="menu__item--hover" bindtap="onApplySwap">
+        <view class="menu__icon menu__icon--swap">
+          <text class="menu__icon-text">换</text>
+        </view>
+        <view class="menu__body">
+          <text class="menu__title">申请换班</text>
+          <text class="menu__desc">选择时间与换班对象，提交后等待审批</text>
+        </view>
+        <text wx:if="{{mySwapCount > 0}}" class="menu__badge">{{mySwapCount}}</text>
+        <text class="menu__arrow">›</text>
+      </view>
+
+      <view class="menu__divider"></view>
+
+      <view class="menu__item" hover-class="menu__item--hover" bindtap="onAdmin">
+        <view class="menu__icon menu__icon--admin">
+          <text class="menu__icon-text">管</text>
+        </view>
+        <view class="menu__body">
+          <text class="menu__title">管理员</text>
+          <text class="menu__desc">密码验证后可审批换班、设置人员、导入 Excel</text>
+        </view>
+        <text wx:if="{{adminSwapCount > 0}}" class="menu__badge">{{adminSwapCount}}</text>
+        <text class="menu__arrow">›</text>
+      </view>
+    </view>
+
+    <view wx:if="{{mySwapCount > 0}}" class="tip">
+      <text class="tip__text">有 {{mySwapCount}} 位同事想和你换班，等待管理员审批</text>
+    </view>
+
+    <text class="group-title">服务连接</text>
+
+    <view class="menu">
+      <view class="menu__item" hover-class="menu__item--hover" bindtap="onPing">
+        <view class="menu__body menu__body--full">
+          <text class="menu__title menu__title--sm">当前地址</text>
+          <text class="menu__desc">{{apiBase}}</text>
+        </view>
+        <text class="menu__link">测试连接</text>
+      </view>
+
+      <view class="menu__divider"></view>
+
+      <view class="menu__item" hover-class="menu__item--hover" bindtap="onEditBase">
+        <view class="menu__body menu__body--full">
+          <text class="menu__title menu__title--sm">修改服务地址</text>
+          <text class="menu__desc">真机调试请填电脑局域网 IP，如 http://192.168.1.5:3100</text>
+        </view>
+        <text class="menu__arrow">›</text>
+      </view>
+    </view>
+
+    <text class="footer">值班排班 {{version}}</text>
+  </view>
+</scroll-view>

@@ -1,0 +1,26 @@
+{
+  "requests": [
+    {
+      "id": "SWMVWJ900740D6",
+      "createdAt": "2026-10-31T15:05:12.777Z",
+      "status": "approved",
+      "requester": {
+        "name": "彭飞",
+        "date": "2026-11-29",
+        "role": "staff",
+        "roleLabel": "工作人员",
+        "groupNo": 6
+      },
+      "target": {
+        "name": "罗刚",
+        "date": "2026-11-04",
+        "role": "staff",
+        "roleLabel": "工作人员",
+        "groupNo": 7
+      },
+      "reason": "",
+      "handledAt": "2026-10-31T15:05:53.639Z",
+      "handledBy": "管理员"
+    }
+  ]
+}
